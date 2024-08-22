@@ -1,0 +1,41 @@
+<div id="translation-actions" class="mt-4">
+  <div class="btn-group">
+    <button
+      type="button"
+      class="btn btn-secondary dropdown-toggle"
+      data-bs-toggle="dropdown"
+    >
+      Download Translation
+    </button>
+    <ul class="dropdown-menu">
+      <li>
+        <a
+          class="dropdown-item"
+          href="#"
+          onclick="downloadText('docx', 'translation')"
+        >DOCX</a>
+      </li>
+      <li>
+        <a
+          class="dropdown-item"
+          href="#"
+          onclick="downloadText('srt', 'translation')"
+        >SRT</a>
+      </li>
+      <li>
+        <a
+          class="dropdown-item"
+          href="#"
+          onclick="downloadText('vtt', 'translation')"
+        >WebVTT</a>
+      </li>
+    </ul>
+  </div>
+  <button
+    type="button"
+    class="btn btn-secondary"
+    onclick="copyToClipboard('translation')"
+  >
+    Copy Translation to Clipboard
+  </button>
+</div>
