@@ -1,0 +1,56 @@
+<div class="accordion-item">
+  <h2 class="accordion-header" id="headingSummary">
+    <button
+      class="accordion-button collapsed"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#collapseSummary"
+      aria-expanded="false"
+      aria-controls="collapseSummary"
+    >
+      Summary
+    </button>
+  </h2>
+  <div
+    id="collapseSummary"
+    class="accordion-collapse collapse"
+    aria-labelledby="headingSummary"
+    data-bs-parent="#transcriptionAccordion"
+  >
+    <div class="accordion-body">
+      <div id="summary-output-container" class="mt-4" style="display: none">
+        <div id="summaryOutput" class="output mt-2">
+          Summary will appear here...
+        </div>
+        <div id="summary-actions" class="mt-4" style="display: none">
+          <div class="btn-group">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="downloadSummary('docx')"
+            >
+              Download DOCX
+            </button>
+          </div>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="copySummaryToClipboard()"
+          >
+            Copy to Clipboard
+          </button>
+          <div class="btn-group dropup">
+            <button
+              type="button"
+              class="btn btn-secondary dropdown-toggle"
+              data-bs-toggle="dropdown"
+            >
+              Translate
+            </button>
+            {% include 'components/language_dropdown.html' %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
