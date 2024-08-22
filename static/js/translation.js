@@ -6,7 +6,7 @@ const translationContainer = document.querySelector(
 document.querySelectorAll("#language-list .dropdown-item").forEach((item) => {
   item.addEventListener("click", function (event) {
     event.preventDefault()
-    const selectedLanguage = this.getAttribute("data-language")
+    const selectedLanguage = this.getAttribute("data-english")
     console.log("Language selected:", selectedLanguage) // Debugging line
     translateText(selectedLanguage)
   })
@@ -51,7 +51,8 @@ function translateText(language) {
             : { text: text + "." }
         })
 
-      // Ensure the translated text is displayed in the translationOutput element
+      console.log("translationSegments:", translationSegments) 
+      
       translationOutput.innerHTML = translationSegments
         .map((segment) => `<p>${segment.text}</p>`)
         .join("")

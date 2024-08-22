@@ -2,21 +2,46 @@
 
 <div id="actions" class="mt-4" style="display: none">
   <div class="btn-group">
-    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+    <button
+      type="button"
+      class="btn btn-secondary dropdown-toggle"
+      data-bs-toggle="dropdown"
+    >
       Download
     </button>
     <ul class="dropdown-menu">
-      <li><a class="dropdown-item" href="#" onclick="downloadText('docx')">DOCX (Word)</a></li>
-      <li><a class="dropdown-item" href="#" onclick="downloadText('srt')">SRT (Subtitles)</a></li>
-      <li><a class="dropdown-item" href="#" onclick="downloadText('vtt')">WebVTT (Subtitles)</a></li>
+      <li>
+        <a class="dropdown-item" href="#" onclick="downloadText('docx')"
+          >DOCX (Word)</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="#" onclick="downloadText('srt')"
+          >SRT (Subtitles)</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="#" onclick="downloadText('vtt')"
+          >WebVTT (Subtitles)</a
+        >
+      </li>
     </ul>
   </div>
-  <button type="button" class="btn btn-secondary" onclick="copyToClipboard()">Copy to Clipboard</button>
-  <div class="btn-group dropup">
-    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+  <button type="button" class="btn btn-secondary" onclick="copyToClipboard()">
+    Copy to Clipboard
+  </button>
+
+  <div id="transcription-notification" class="notification" style="display: none"></div>
+
+
+  <div class="btn-group">
+    <button
+      type="button"
+      class="btn btn-secondary dropdown-toggle"
+      data-bs-toggle="dropdown"
+    >
       Translate
     </button>
     {% include 'components/language_dropdown.html' %}
-
   </div>
 </div>
