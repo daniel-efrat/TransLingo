@@ -107,22 +107,32 @@ def create_app():
     def translate():
         try:
             data = request.get_json()
-            text = data['text']
-            target_language = data['language']
+            text = data.get('text', '')
+            target_language = data.get('language', '')
+
+            print(f"Received text for translation: {text[:50]}...")  # Log part of the text
+            print(f"Target language: {target_language}")
+
+            if not text or not target_language:
+                raise ValueError("Text or language not provided")
 
             prompt = f"Translate the following text to {target_language}:\n\n{text}\n\nOutput only the translated text."
 
             translation = client.chat.completions.create(
-                model="gpt-4o-mini",  # Use the correct model name
+                model="gpt-4-turbo",  # Ensure the model name is correct
                 messages=[{"role": "user", "content": prompt}]
             )
 
             translated_text = translation.choices[0].message.content
+            print(f"Translation successful: {translated_text[:50]}...")  # Log part of the translation
             return jsonify({"output": translated_text})
 
+        except ValueError as ve:
+            print(f"Value error: {ve}")
+            return jsonify({"error": str(ve)}), 400
         except Exception as e:
             print(f"Error during translation: {e}")
-            return jsonify({"error": str(e)}), 500
+            return jsonify({"error": "An unknown error occurred"}), 500
 
     @app.route("/download", methods=["POST"])
     def download():

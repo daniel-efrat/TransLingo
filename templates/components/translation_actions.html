@@ -1,41 +1,233 @@
-<div id="translation-actions" class="mt-4">
+<div id="actions" class="mt-4" style="display: none">
   <div class="btn-group">
     <button
       type="button"
       class="btn btn-secondary dropdown-toggle"
       data-bs-toggle="dropdown"
     >
-      Download Translation
+      Download
     </button>
     <ul class="dropdown-menu">
       <li>
-        <a
-          class="dropdown-item"
-          href="#"
-          onclick="downloadText('docx', 'translation')"
-        >DOCX</a>
+        <a class="dropdown-item" href="#" onclick="downloadText('docx')"
+          >DOCX (Word)</a
+        >
       </li>
       <li>
-        <a
-          class="dropdown-item"
-          href="#"
-          onclick="downloadText('srt', 'translation')"
-        >SRT</a>
+        <a class="dropdown-item" href="#" onclick="downloadText('srt')"
+          >SRT (Subtitles)</a
+        >
       </li>
       <li>
-        <a
-          class="dropdown-item"
-          href="#"
-          onclick="downloadText('vtt', 'translation')"
-        >WebVTT</a>
+        <a class="dropdown-item" href="#" onclick="downloadText('vtt')"
+          >WebVTT (Subtitles)</a
+        >
       </li>
     </ul>
   </div>
-  <button
-    type="button"
-    class="btn btn-secondary"
-    onclick="copyToClipboard('translation')"
-  >
-    Copy Translation to Clipboard
+  <button type="button" class="btn btn-secondary" onclick="copyToClipboard()">
+    Copy to Clipboard
   </button>
+ <div class="btn-group dropup">
+    <button
+      type="button"
+      class="btn btn-secondary dropdown-toggle"
+      data-bs-toggle="dropdown"
+    >
+      Translate
+    </button>
+    <div class="dropdown-menu p-2" style="width: 250px; max-height: 300px; overflow-y: auto;">
+      <input
+        type="text"
+        id="language-search"
+        class="form-control mb-2"
+        placeholder="Search language..."
+      />
+      <ul id="language-list" class="list-unstyled">
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="English"
+            data-english="English"
+            onclick="translateText('en')"
+            >English</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Español"
+            data-english="Spanish"
+            onclick="translateText('es')"
+            >Español</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Français"
+            data-english="French"
+            onclick="translateText('fr')"
+            >Français</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Deutsch"
+            data-english="German"
+            onclick="translateText('de')"
+            >Deutsch</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="עברית"
+            data-english="Hebrew"
+            onclick="translateText('he')"
+            >עברית</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Italiano"
+            data-english="Italian"
+            onclick="translateText('it')"
+            >Italiano</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Português"
+            data-english="Portuguese"
+            onclick="translateText('pt')"
+            >Português</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Português (BR)"
+            data-english="Brazilian Portuguese"
+            onclick="translateText('pt-br')"
+            >Português (BR)</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Nederlands"
+            data-english="Dutch"
+            onclick="translateText('nl')"
+            >Nederlands</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Svenska"
+            data-english="Swedish"
+            onclick="translateText('sv')"
+            >Svenska</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Norsk"
+            data-english="Norwegian"
+            onclick="translateText('no')"
+            >Norsk</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Dansk"
+            data-english="Danish"
+            onclick="translateText('da')"
+            >Dansk</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Suomi"
+            data-english="Finnish"
+            onclick="translateText('fi')"
+            >Suomi</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Čeština"
+            data-english="Czech"
+            onclick="translateText('cs')"
+            >Čeština</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Magyar"
+            data-english="Hungarian"
+            onclick="translateText('hu')"
+            >Magyar</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Română"
+            data-english="Romanian"
+            onclick="translateText('ro')"
+            >Română</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Polski"
+            data-english="Polish"
+            onclick="translateText('pl')"
+            >Polski</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-native="Ελληνικά"
+            data-english="Greek"
+            onclick="translateText('el')"
+            >Ελληνικά</a
+          >
+                  <!-- etc... -->
+
+      
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>

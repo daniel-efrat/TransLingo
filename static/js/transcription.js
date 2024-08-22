@@ -1,5 +1,3 @@
-// transcription.js
-
 function displayTranscription(segments, container) {
   container.innerHTML = "" // Clear previous content
   segments.forEach((segment) => {
