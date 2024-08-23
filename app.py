@@ -20,7 +20,7 @@ def convert_to_mp3(file, filename):
     ext = filename.split('.')[-1].lower()
     print(f"File extension detected: {ext}")
 
-    if ext == 'mp3':
+    if (ext == 'mp3'):
         print("File is already in MP3 format, no conversion needed.")
         file.seek(0)
         mp3_buffer = io.BytesIO(file.read())
@@ -119,7 +119,7 @@ def create_app():
             prompt = f"Translate the following text to {target_language}:\n\n{text}\n\nOutput only the translated text."
 
             translation = client.chat.completions.create(
-                model="gpt-4-turbo",  # Ensure the model name is correct
+                model="gpt-4o-mini",  
                 messages=[{"role": "user", "content": prompt}]
             )
 
@@ -196,6 +196,8 @@ def create_app():
 
     return app
 
+# Create the Flask app instance at the module level
+app = create_app()
+
 if __name__ == "__main__":
-    app = create_app()
     app.run(debug=True)
