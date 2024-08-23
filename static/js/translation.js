@@ -2,6 +2,7 @@ const translationOutput = document.querySelector("#translation-output")
 const translationContainer = document.querySelector(
   "#translation-output-container"
 )
+const translationActions = document.querySelector("#translation-actions")
 
 document.querySelectorAll("#language-list .dropdown-item").forEach((item) => {
   item.addEventListener("click", function (event) {
@@ -70,7 +71,7 @@ function translateText(language) {
         translationOutput.appendChild(paragraph)
       })
 
-      translationContainer.style.display = "block" // Show translation container
+      translationActions.style.display = "block" // Show translation container
 
       const transcriptionCollapse = new bootstrap.Collapse(
         "#collapseTranscription",

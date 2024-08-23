@@ -1,4 +1,7 @@
+const container = document.querySelector("#transcription-output-container")
+
 function displayTranscription(segments, container) {
+  container.style.display = "block"
   container.innerHTML = "" // Clear previous content
   segments.forEach((segment) => {
     const paragraph = document.createElement("p")

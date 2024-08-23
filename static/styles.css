@@ -152,7 +152,11 @@ box-shadow: inset 5px 5px 10px #181818,
 footer {
   margin-top: 2rem;
   text-align: center;
-  color:#e0e0e0
+  color:#e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .output {
@@ -232,3 +236,10 @@ color: #e0e0e0
     direction: ltr;
     text-align: left;
 }
+
+.attribute {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        justify-content: center;
+    }
