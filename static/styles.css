@@ -173,8 +173,8 @@ form {
 
 /* Spinner styles */
 .spinner {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   border: 8px solid rgba(255, 255, 255, 0.3);
   border-top-color: #2690b2;
   border-radius: 50%;
@@ -194,7 +194,7 @@ form {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   color: e0e0e0;
   position: fixed;
   top: 0;
@@ -220,4 +220,14 @@ form {
 .dropdown-menu {
 background: #2690b2;
 color: #e0e0e0
+}
+
+.rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+.ltr {
+    direction: ltr;
+    text-align: left;
 }

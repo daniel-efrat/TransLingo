@@ -5,6 +5,7 @@ const loaderMessage = document.querySelector("#loader-message")
 const transcribingMessages = [
   "Just a moment... Our AI is transcribing everything you said!",
   "The AI is already transcribing all the words!",
+  "This may take a while, depending on your file size...",
   "Polishing and refining your transcription!",
   "Almost there - the transcription is nearly ready!",
 ]
@@ -12,6 +13,7 @@ const transcribingMessages = [
 const translatingMessages = [
   "Hold on... We're translating your text!",
   "Our AI is working hard to translate every word!",
+  "This may take a while, depending on your file size...",
   "Almost done translating your content!",
   "Just a moment more - your translation is nearly complete!",
 ]

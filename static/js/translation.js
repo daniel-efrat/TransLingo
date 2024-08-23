@@ -45,17 +45,30 @@ function translateText(language) {
         .split(".")
         .map((text) => text.trim())
         .filter((text) => text.length > 0)
-        .map((text, index, array) => {
-          return index < array.length - 1
-            ? { text: text + "." }
-            : { text: text + "." }
-        })
+        .map((text) => ({ text: text + "." }))
 
-      console.log("translationSegments:", translationSegments) 
-      
-      translationOutput.innerHTML = translationSegments
-        .map((segment) => `<p>${segment.text}</p>`)
-        .join("")
+      console.log("translationSegments:", translationSegments)
+
+      // Clear previous translation content but keep the actions intact
+      const translationOutput = document.querySelector("#translation-output")
+      translationOutput.innerHTML = "" // Clear previous content only in the text container
+
+      const rtlPattern = /[\u0590-\u05FF\u0600-\u06FF]/ // Hebrew and Arabic character ranges
+
+      translationSegments.forEach((segment) => {
+        const paragraph = document.createElement("p")
+        paragraph.textContent = segment.text
+
+        if (rtlPattern.test(segment.text)) {
+          paragraph.classList.add("rtl")
+          paragraph.classList.remove("ltr")
+        } else {
+          paragraph.classList.add("ltr")
+          paragraph.classList.remove("rtl")
+        }
+
+        translationOutput.appendChild(paragraph)
+      })
 
       translationContainer.style.display = "block" // Show translation container
 
@@ -84,3 +97,4 @@ function translateText(language) {
       alert(`An error occurred during translation: ${error.message}`)
     })
 }
+

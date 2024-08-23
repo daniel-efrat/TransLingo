@@ -135,27 +135,29 @@ uploadForm.onsubmit = function (event) {
 // Function to display transcription or translation
 function displayTranscription(segments, container) {
   container.innerHTML = "" // Clear previous content
+
+  const rtlPattern = /[\u0590-\u05FF\u0600-\u06FF]/ // Hebrew and Arabic character ranges
+
   segments.forEach((segment) => {
     const paragraph = document.createElement("p")
     paragraph.textContent = segment.text
 
-    const rtlPattern = /[\u0590-\u05FF\u0600-\u06FF]/ // Hebrew and Arabic character ranges
     if (rtlPattern.test(segment.text)) {
       paragraph.style.direction = "rtl"
       paragraph.style.textAlign = "right"
+      paragraph.setAttribute("dir", "rtl") // Explicitly set the dir attribute to RTL
     } else {
       paragraph.style.direction = "ltr"
       paragraph.style.textAlign = "left"
+      paragraph.setAttribute("dir", "ltr") // Explicitly set the dir attribute to LTR
     }
 
     container.appendChild(paragraph)
+  })
 
-    const transcriptionCollapse = new bootstrap.Collapse(
-      "#collapseTranscription",
-      {
-        hide: false,
-      }
-    )
+  // Ensure the collapse behavior is applied after rendering
+  const transcriptionCollapse = new bootstrap.Collapse("#collapseTranscription", {
+    hide: false,
   })
 }
 
