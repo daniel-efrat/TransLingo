@@ -4,30 +4,37 @@
       type="button"
       class="btn btn-secondary dropdown-toggle"
       data-bs-toggle="dropdown"
+      aria-label="Download Translation"
     >
-      Download Translation
+      <i class="fas fa-download"></i>
     </button>
     <ul class="dropdown-menu">
       <li>
         <a
           class="dropdown-item"
           href="#"
-          onclick="downloadText('docx', 'translation')"
-        >DOCX</a>
+          onclick="downloadTranslation('docx')"
+        >
+          <i class="far fa-file-word"></i> DOCX (Word)
+        </a>
       </li>
       <li>
         <a
           class="dropdown-item"
           href="#"
-          onclick="downloadText('srt', 'translation')"
-        >SRT</a>
+          onclick="downloadTranslation('srt')"
+        >
+          <i class="far fa-closed-captioning"></i> SRT (Subtitles)
+        </a>
       </li>
       <li>
         <a
           class="dropdown-item"
           href="#"
-          onclick="downloadText('vtt', 'translation')"
-        >WebVTT</a>
+          onclick="downloadTranslation('vtt')"
+        >
+          <i class="far fa-closed-captioning"></i> WebVTT (Subtitles)
+        </a>
       </li>
     </ul>
   </div>
@@ -35,9 +42,10 @@
     type="button"
     id="copyTranslation"
     class="btn btn-secondary"
-    onclick="copyToClipboard('translation')"
+    onclick="copyTranslationToClipboard()"
+    aria-label="Copy Translation to Clipboard"
   >
-    Copy to Clipboard
+    <i class="far fa-copy"></i>
   </button>
   <div id="translation-notification" class="notification" style="display: none;">Copied to clipboard!</div>
 </div>

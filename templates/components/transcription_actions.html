@@ -6,41 +6,42 @@
       type="button"
       class="btn btn-secondary dropdown-toggle"
       data-bs-toggle="dropdown"
+      aria-label="Download"
     >
-      Download
+      <i class="fas fa-download"></i>
     </button>
     <ul class="dropdown-menu">
       <li>
-        <a class="dropdown-item" href="#" onclick="downloadText('docx')"
-          >DOCX (Word)</a
-        >
+        <a class="dropdown-item" href="#" onclick="downloadText('docx')">
+          <i class="far fa-file-word"></i> DOCX (Word)
+        </a>
       </li>
       <li>
-        <a class="dropdown-item" href="#" onclick="downloadText('srt')"
-          >SRT (Subtitles)</a
-        >
+        <a class="dropdown-item" href="#" onclick="downloadText('srt')">
+          <i class="far fa-closed-captioning"></i> SRT (Subtitles)
+        </a>
       </li>
       <li>
-        <a class="dropdown-item" href="#" onclick="downloadText('vtt')"
-          >WebVTT (Subtitles)</a
-        >
+        <a class="dropdown-item" href="#" onclick="downloadText('vtt')">
+          <i class="far fa-closed-captioning"></i> WebVTT (Subtitles)
+        </a>
       </li>
     </ul>
   </div>
-  <button type="button" class="btn btn-secondary" onclick="copyToClipboard()">
-    Copy to Clipboard
+  <button type="button" class="btn btn-secondary" onclick="copyToClipboard()" aria-label="Copy to Clipboard">
+    <i class="far fa-copy"></i>
   </button>
 
   <div id="transcription-notification" class="notification" style="display: none"></div>
-
 
   <div class="btn-group">
     <button
       type="button"
       class="btn btn-secondary dropdown-toggle"
       data-bs-toggle="dropdown"
+      aria-label="Translate"
     >
-      Translate
+      <i class="fas fa-language"></i>
     </button>
     {% include 'components/language_dropdown.html' %}
   </div>
