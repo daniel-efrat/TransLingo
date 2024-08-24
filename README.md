@@ -4,6 +4,8 @@ AI video & audio transcription, translation and summary with Flask & OpenAI API
 
 Live app: [translingo.pro](https://www.translingo.pro)
 
+Live app: [translingo.pro](https://www.translingo.pro)
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your system:
