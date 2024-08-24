@@ -39,6 +39,8 @@
   <div id="translation-notification" class="notification" style="display: none;">Copied to clipboard!</div>
 </div>
 
+<script src="/static/js/notifications.js"></script>
+
 <script>
 function getTranslationText() {
     const translationOutput = document.getElementById('translation-output');
@@ -122,21 +124,6 @@ function showTranslationActions(show = true) {
     } else {
         console.error('Translation actions element not found');
     }
-}
-
-function showNotification(message, type) {
-    console.log('Showing notification:', message, type);
-    const notification = document.getElementById('translation-notification');
-    if (!notification) {
-        console.error('Notification element not found');
-        return;
-    }
-    notification.textContent = message;
-    notification.className = `notification ${type}`;
-    notification.style.display = 'block';
-    setTimeout(() => {
-        notification.style.display = 'none';
-    }, 5000);
 }
 
 // Call this function when translation is complete

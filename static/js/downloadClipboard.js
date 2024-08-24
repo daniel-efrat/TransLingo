@@ -33,44 +33,23 @@ function downloadText(format, type = "transcription") {
 // Declare a variable to store the timeout
 let notificationTimeout
 
-function showNotification() {
-  const notification = document.querySelector(".notification")
+// Remove the existing showNotification function
+// And update the copyToClipboard function:
 
-  if (!notification) {
-    console.error("Notification element not found!")
-    return
-  }
-
-  notification.textContent = "Copied to clipboard!"
-  notification.style.display = "block"
-
-  // Clear any existing timeout before setting a new one
-  if (notificationTimeout) {
-    clearTimeout(notificationTimeout)
-  }
-
-  notificationTimeout = setTimeout(() => {
-    notification.style.display = "none"
-  }, 2000)
-}
-
-
-// Function to copy transcription or translation to clipboard
 function copyToClipboard(type = "transcription") {
   const segments = type === "transcription" ? transcriptionSegments : translationSegments;
-  console.log(`Copying ${type} segments:`, segments); // Debugging log
+  console.log(`Copying ${type} segments:`, segments);
   const fullText = segments.map((segment) => segment.text).join(" ");
   navigator.clipboard
     .writeText(fullText)
     .then(() => {
       showNotification(
-        `${type.charAt(0).toUpperCase() + type.slice(1)} copied to clipboard!`
+        `${type.charAt(0).toUpperCase() + type.slice(1)} copied to clipboard!`,
+        'success'
       );
     })
     .catch((err) => {
       console.error("Could not copy text: ", err);
+      showNotification('Failed to copy to clipboard', 'error');
     });
 }
-
-
-
