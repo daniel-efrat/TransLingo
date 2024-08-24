@@ -1,48 +1,157 @@
 <!-- transcription_actions.html -->
 
-<div id="actions" class="mt-4" style="display: none">
+<div id="transcription-actions" class="mt-4" style="display: none">
   <div class="btn-group">
     <button
       type="button"
       class="btn btn-secondary dropdown-toggle"
       data-bs-toggle="dropdown"
-      aria-label="Download"
+      aria-label="Download Transcription"
     >
       <i class="fas fa-download"></i>
     </button>
     <ul class="dropdown-menu">
       <li>
-        <a class="dropdown-item" href="#" onclick="downloadText('docx')">
+        <a class="dropdown-item" href="#" onclick="downloadTranscription('docx')">
           <i class="far fa-file-word"></i> DOCX (Word)
         </a>
       </li>
       <li>
-        <a class="dropdown-item" href="#" onclick="downloadText('srt')">
+        <a class="dropdown-item" href="#" onclick="downloadTranscription('srt')">
           <i class="far fa-closed-captioning"></i> SRT (Subtitles)
         </a>
       </li>
       <li>
-        <a class="dropdown-item" href="#" onclick="downloadText('vtt')">
+        <a class="dropdown-item" href="#" onclick="downloadTranscription('vtt')">
           <i class="far fa-closed-captioning"></i> WebVTT (Subtitles)
         </a>
       </li>
     </ul>
   </div>
-  <button type="button" class="btn btn-secondary" onclick="copyToClipboard()" aria-label="Copy to Clipboard">
+  <button
+    type="button"
+    id="copyTranscription"
+    class="btn btn-secondary"
+    onclick="copyTranscriptionToClipboard()"
+    aria-label="Copy Transcription to Clipboard"
+  >
     <i class="far fa-copy"></i>
   </button>
-
-  <div id="transcription-notification" class="notification" style="display: none"></div>
-
   <div class="btn-group">
     <button
       type="button"
       class="btn btn-secondary dropdown-toggle"
       data-bs-toggle="dropdown"
-      aria-label="Translate"
+      aria-expanded="false"
     >
-      <i class="fas fa-language"></i>
+      Translate
     </button>
     {% include 'components/language_dropdown.html' %}
   </div>
+  <div id="transcription-notification" class="notification" style="display: none;">Copied to clipboard!</div>
 </div>
+
+<script>
+function getTranscriptionText() {
+    const transcriptionOutput = document.getElementById('output');
+    if (!transcriptionOutput) {
+        console.error('Transcription output element not found');
+        showNotification('Error: Transcription output not found', 'error');
+        return null;
+    }
+    return transcriptionOutput.textContent.trim();
+}
+
+function downloadTranscription(format) {
+    console.log('Download transcription triggered for format:', format);
+    
+    const transcriptionOutput = document.getElementById('output');
+    if (!transcriptionOutput) {
+        console.error('Transcription output element not found');
+        showNotification('Error: Transcription output not found', 'error');
+        return;
+    }
+
+    // Use the original segments with timestamps
+    const segments = transcriptionSegments;
+
+    console.log('Segments to be sent:', segments);
+
+    fetch('/download', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            segments: segments,
+            format: format,
+            type: 'transcription'
+        }),
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error || 'Unknown error occurred'); });
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        console.log('Blob received:', blob.size, 'bytes');
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `transcription.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        showNotification(`Transcription downloaded successfully as ${format}`, 'success');
+    })
+    .catch(error => {
+        console.error('Download error:', error);
+        showNotification(error.message || 'An error occurred during download.', 'error');
+    });
+}
+
+function copyTranscriptionToClipboard() {
+    const text = getTranscriptionText();
+    if (!text) return;
+
+    navigator.clipboard.writeText(text).then(function() {
+        showNotification('Transcription copied to clipboard', 'success');
+    }, function(err) {
+        console.error('Could not copy text: ', err);
+        showNotification('Failed to copy transcription', 'error');
+    });
+}
+
+function showTranscriptionActions(show = true) {
+    const actions = document.getElementById('transcription-actions');
+    if (actions) {
+        actions.style.display = show ? 'block' : 'none';
+    } else {
+        console.warn('Transcription actions element not found');
+    }
+}
+
+function showNotification(message, type) {
+    console.log('Showing notification:', message, type);
+    const notification = document.getElementById('transcription-notification');
+    if (!notification) {
+        console.error('Notification element not found');
+        return;
+    }
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 5000);
+}
+
+// Call this function when transcription is complete
+// showTranscriptionActions(true);
+
+// Call this function when starting a new transcription or clearing the transcription
+// showTranscriptionActions(false);
+</script>

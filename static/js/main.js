@@ -19,5 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
     handleFormSubmission(formData) // Call the form submission handler
   }
 
-  // Other initialization code here
+  // After transcription is complete
+  showTranscriptionActions(true);
 })

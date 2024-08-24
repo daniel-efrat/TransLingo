@@ -4,98 +4,73 @@ const translationContainer = document.querySelector(
 )
 const translationActions = document.querySelector("#translation-actions")
 
-document.querySelectorAll("#language-list .dropdown-item").forEach((item) => {
-  item.addEventListener("click", function (event) {
-    event.preventDefault()
-    const selectedLanguage = this.getAttribute("data-english")
-    console.log("Language selected:", selectedLanguage) // Debugging line
-    translateText(selectedLanguage)
-  })
-})
-
-function translateText(language) {
-  const fullText = transcriptionSegments
-    .map((segment) => segment.text)
-    .join(" ")
-
-  const clearLoaderInterval = showLoader(translatingMessages) // Show loader for translation
-
-  fetch("/translate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ text: fullText, language: language }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((data) => {
-          throw new Error(data.error || "Unknown error occurred")
-        })
+document.addEventListener('DOMContentLoaded', function() {
+  const languageList = document.querySelector("#language-list");
+  if (languageList) {
+    languageList.addEventListener('click', function(event) {
+      if (event.target.classList.contains('dropdown-item')) {
+        event.preventDefault();
+        const selectedLanguage = event.target.getAttribute("data-english");
+        console.log("Language selected:", selectedLanguage);
+        translateTranscription(selectedLanguage);
       }
-      return response.json()
+    });
+  } else {
+    console.error("Language list not found");
+  }
+});
+
+function translateTranscription(language) {
+    if (!transcriptionSegments || transcriptionSegments.length === 0) {
+        console.error('No transcription segments available');
+        showNotification('Error: No transcription available to translate', 'error');
+        return;
+    }
+
+    const clearLoaderInterval = showLoader(translatingMessages);
+
+    fetch('/translate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            segments: transcriptionSegments,
+            language: language
+        }),
     })
-    .then((data) => {
-      hideLoader(clearLoaderInterval)
-
-      if (data.error) {
-        throw new Error(data.error)
-      }
-
-      translationSegments = data.output
-        .split(".")
-        .map((text) => text.trim())
-        .filter((text) => text.length > 0)
-        .map((text) => ({ text: text + "." }))
-
-      console.log("translationSegments:", translationSegments)
-
-      // Clear previous translation content but keep the actions intact
-      const translationOutput = document.querySelector("#translation-output")
-      translationOutput.innerHTML = "" // Clear previous content only in the text container
-
-      const rtlPattern = /[\u0590-\u05FF\u0600-\u06FF]/ // Hebrew and Arabic character ranges
-
-      translationSegments.forEach((segment) => {
-        const paragraph = document.createElement("p")
-        paragraph.textContent = segment.text
-
-        if (rtlPattern.test(segment.text)) {
-          paragraph.classList.add("rtl")
-          paragraph.classList.remove("ltr")
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error || 'Unknown error occurred'); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        hideLoader(clearLoaderInterval);
+        const translationOutput = document.getElementById('translation-output');
+        if (translationOutput) {
+            displayTranslation(data.output, translationOutput);
+            showTranslationActions(true);
         } else {
-          paragraph.classList.add("ltr")
-          paragraph.classList.remove("rtl")
+            console.error('Translation output element not found');
         }
-
-        translationOutput.appendChild(paragraph)
-      })
-
-      translationActions.style.display = "block" // Show translation container
-
-      const transcriptionCollapse = new bootstrap.Collapse(
-        "#collapseTranscription",
-        {
-          hide: true,
-        }
-      )
-      const translationCollapse = new bootstrap.Collapse(
-        "#collapseTranslation",
-        {
-          show: true,
-        }
-      )
-
-      document
-        .querySelector("#collapseTranslation")
-        .addEventListener("shown.bs.collapse", function () {
-          translationContainer.scrollIntoView({ behavior: "smooth" })
-        })
     })
-    .catch((error) => {
-      hideLoader(clearLoaderInterval)
-      console.error("Error:", error.message)
-      alert(`An error occurred during translation: ${error.message}`)
-    })
+    .catch(error => {
+        hideLoader(clearLoaderInterval);
+        console.error('Translation error:', error);
+        showNotification(error.message || 'An error occurred during translation.', 'error');
+    });
 }
 
+function displayTranslation(segments, outputElement) {
+    // Display each translated segment in its own paragraph
+    outputElement.innerHTML = segments.map(segment => `<p>${segment.text}</p>`).join('');
+    
+    // Store the full segment data (including timestamps) for later use
+    outputElement.dataset.originalSegments = JSON.stringify(segments);
+
+    // Show the translation accordion
+    const translationCollapse = new bootstrap.Collapse('#collapseTranslation', {
+        show: true
+    });
+}

@@ -3,6 +3,14 @@
 {% block content %}
   {% include 'components/splash_screen.html' %}
   {% include 'components/transcription_form.html' %}
-  {% include 'components/accordion.html' %}
+  <div class="accordion" id="transcriptionAccordion">
+    {% include 'components/transcription_accordion.html' %}
+    {% include 'components/translation_accordion.html' %}
+  </div>
   {% include 'components/loader.html' %}
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/translation.js') }}"></script>
 {% endblock %}

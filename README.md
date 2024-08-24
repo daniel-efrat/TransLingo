@@ -1,6 +1,8 @@
 # TransLingo Pro
 
-AI video & audio transcription, translation and subtitles with Flask & OpenAI API
+AI video & audio transcription, translation and summary with Flask & OpenAI API
+
+Live app: [translingo.pro](https://www.translingo.pro)
 
 ## Prerequisites
 

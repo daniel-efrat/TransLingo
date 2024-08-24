@@ -1,5 +1,12 @@
 // upload.js
-const actions = document.querySelector("#actions")
+function safelyAccessElement(id) {
+    const element = document.getElementById(id);
+    if (!element) {
+        console.warn(`Element with id '${id}' not found`); // Changed from error to warning
+        return null;
+    }
+    return element;
+}
 
 function handleFormSubmission(formData) {
   const clearLoaderInterval = showLoader(transcribingMessages) // Show loader for transcription
@@ -14,13 +21,30 @@ function handleFormSubmission(formData) {
       if (data.error) {
         throw new Error(data.error)
       }
-      transcriptionSegments = data.output
-      displayTranscription(transcriptionSegments, output)
-      actions.style.display = "block" // Show action buttons
+      transcriptionSegments = data.output // Store full segment objects
+      const outputElement = safelyAccessElement('output');
+      if (outputElement) {
+        displayTranscription(transcriptionSegments, outputElement)
+      } else {
+        console.error('Output element not found');
+      }
+      const actionsElement = safelyAccessElement('transcription-actions');
+      if (actionsElement) {
+        actionsElement.style.display = "block" // Show action buttons
+      } else {
+        console.warn("Transcription actions element not found, unable to display actions.");
+      }
+      // Show the transcription accordion
+      const transcriptionCollapse = new bootstrap.Collapse('#collapseTranscription', {
+        show: true
+      });
     })
     .catch((error) => {
       hideLoader(clearLoaderInterval) // Hide loader
       console.error("Error:", error)
-      output.innerHTML = "An error occurred during transcription."
+      const outputElement = safelyAccessElement('output');
+      if (outputElement) {
+        outputElement.innerHTML = "An error occurred during transcription."
+      }
     })
 }

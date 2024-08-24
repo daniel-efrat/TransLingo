@@ -1,3 +1,4 @@
+<div id="translation-output" class="mt-3"></div>
 <div id="translation-actions" class="mt-4" style="display: none">
   <div class="btn-group">
     <button
@@ -10,29 +11,17 @@
     </button>
     <ul class="dropdown-menu">
       <li>
-        <a
-          class="dropdown-item"
-          href="#"
-          onclick="downloadTranslation('docx')"
-        >
+        <a class="dropdown-item" href="#" onclick="downloadTranslation('docx')">
           <i class="far fa-file-word"></i> DOCX (Word)
         </a>
       </li>
       <li>
-        <a
-          class="dropdown-item"
-          href="#"
-          onclick="downloadTranslation('srt')"
-        >
+        <a class="dropdown-item" href="#" onclick="downloadTranslation('srt')">
           <i class="far fa-closed-captioning"></i> SRT (Subtitles)
         </a>
       </li>
       <li>
-        <a
-          class="dropdown-item"
-          href="#"
-          onclick="downloadTranslation('vtt')"
-        >
+        <a class="dropdown-item" href="#" onclick="downloadTranslation('vtt')">
           <i class="far fa-closed-captioning"></i> WebVTT (Subtitles)
         </a>
       </li>
@@ -50,13 +39,109 @@
   <div id="translation-notification" class="notification" style="display: none;">Copied to clipboard!</div>
 </div>
 
-  <script>
-    document.getElementById('copyTranslation').addEventListener('click', function() {
-        var notification = document.getElementById('translation-notification');
-        notification.style.display = 'block';
-        
-        setTimeout(function() {
-            notification.style.display = 'none';
-        }, 2000);
+<script>
+function getTranslationText() {
+    const translationOutput = document.getElementById('translation-output');
+    if (!translationOutput) {
+        console.error('Translation output element not found');
+        showNotification('Error: Translation output not found', 'error');
+        return null;
+    }
+    // Join all paragraph texts with newlines
+    return Array.from(translationOutput.getElementsByTagName('p'))
+        .map(p => p.textContent.trim())
+        .join('\n');
+}
+
+function downloadTranslation(format) {
+    console.log('Download translation triggered for format:', format);
+    
+    const translationOutput = document.getElementById('translation-output');
+    if (!translationOutput) {
+        console.error('Translation output element not found');
+        showNotification('Error: Translation output not found', 'error');
+        return;
+    }
+
+    const segments = JSON.parse(translationOutput.dataset.originalSegments || '[]');
+
+    console.log('Segments to be sent:', segments);
+
+    fetch('/download', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            segments: segments,
+            format: format,
+            type: 'translation'
+        }),
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error || 'Unknown error occurred'); });
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        console.log('Blob received:', blob.size, 'bytes');
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `translation.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        showNotification(`Translation downloaded successfully as ${format}`, 'success');
+    })
+    .catch(error => {
+        console.error('Download error:', error);
+        showNotification(error.message || 'An error occurred during download.', 'error');
     });
+}
+
+function copyTranslationToClipboard() {
+    const text = getTranslationText();
+    if (!text) return;
+
+    navigator.clipboard.writeText(text).then(function() {
+        showNotification('Translation copied to clipboard', 'success');
+    }, function(err) {
+        console.error('Could not copy text: ', err);
+        showNotification('Failed to copy translation', 'error');
+    });
+}
+
+function showTranslationActions(show = true) {
+    const actions = document.getElementById('translation-actions');
+    if (actions) {
+        actions.style.display = show ? 'block' : 'none';
+    } else {
+        console.error('Translation actions element not found');
+    }
+}
+
+function showNotification(message, type) {
+    console.log('Showing notification:', message, type);
+    const notification = document.getElementById('translation-notification');
+    if (!notification) {
+        console.error('Notification element not found');
+        return;
+    }
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 5000);
+}
+
+// Call this function when translation is complete
+// showTranslationActions(true);
+
+// Call this function when starting a new translation or clearing the translation
+// showTranslationActions(false);
 </script>

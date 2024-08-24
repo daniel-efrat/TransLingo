@@ -62,6 +62,45 @@ def set_rtl(paragraph):
     alignment.set(qn('w:val'), "right")
     pPr.append(alignment)
 
+def generate_srt(segments, is_translation=False):
+    srt_content = ""
+    for i, segment in enumerate(segments, start=1):
+        if not is_translation and 'start' in segment and 'end' in segment:
+            start_time = format_time(segment['start'])
+            end_time = format_time(segment['end'])
+        else:
+            start_time = format_time(i * 5)
+            end_time = format_time((i + 1) * 5)
+        text = segment['text']
+        srt_content += f"{i}\n{start_time} --> {end_time}\n{text}\n\n"
+    return srt_content
+
+def generate_vtt(segments, is_translation=False):
+    vtt_content = "WEBVTT\n\n"
+    for i, segment in enumerate(segments, start=1):
+        if not is_translation and 'start' in segment and 'end' in segment:
+            start_time = format_time(segment['start']).replace(',', '.')
+            end_time = format_time(segment['end']).replace(',', '.')
+        else:
+            start_time = format_time(i * 5).replace(',', '.')
+            end_time = format_time((i + 1) * 5).replace(',', '.')
+        text = segment['text']
+        vtt_content += f"{start_time} --> {end_time}\n{text}\n\n"
+    return vtt_content
+
+def format_time(seconds):
+    if isinstance(seconds, str):
+        try:
+            seconds = float(seconds)
+        except ValueError:
+            seconds = 0
+    
+    hours = int(seconds / 3600)
+    minutes = int((seconds % 3600) / 60)
+    seconds = seconds % 60
+    milliseconds = int((seconds - int(seconds)) * 1000)
+    return f"{hours:02d}:{minutes:02d}:{int(seconds):02d},{milliseconds:03d}"
+
 def create_app():
     app = Flask(__name__)
     CORS(app)
@@ -107,25 +146,34 @@ def create_app():
     def translate():
         try:
             data = request.get_json()
-            text = data.get('text', '')
+            segments = data.get('segments', [])
             target_language = data.get('language', '')
 
-            print(f"Received text for translation: {text[:50]}...")  # Log part of the text
+            print(f"Received segments for translation: {len(segments)} segments")
             print(f"Target language: {target_language}")
 
-            if not text or not target_language:
-                raise ValueError("Text or language not provided")
+            if not segments or not target_language:
+                raise ValueError("Segments or language not provided")
 
-            prompt = f"Translate the following text to {target_language}:\n\n{text}\n\nOutput only the translated text."
+            translated_segments = []
+            for segment in segments:
+                text = segment['text']
+                prompt = f"Translate the following text to {target_language}:\n\n{text}\n\nOutput only the translated text."
 
-            translation = client.chat.completions.create(
-                model="gpt-4o-mini",  
-                messages=[{"role": "user", "content": prompt}]
-            )
+                translation = client.chat.completions.create(
+                    model="gpt-3.5-turbo",  # Changed from "gpt-4o-mini" to "gpt-3.5-turbo"
+                    messages=[{"role": "user", "content": prompt}]
+                )
 
-            translated_text = translation.choices[0].message.content
-            print(f"Translation successful: {translated_text[:50]}...")  # Log part of the translation
-            return jsonify({"output": translated_text})
+                translated_text = translation.choices[0].message.content
+                translated_segments.append({
+                    'start': segment.get('start'),
+                    'end': segment.get('end'),
+                    'text': translated_text
+                })
+
+            print(f"Translation successful: {len(translated_segments)} segments translated")
+            return jsonify({"output": translated_segments})
 
         except ValueError as ve:
             print(f"Value error: {ve}")
@@ -138,61 +186,73 @@ def create_app():
     def download():
         try:
             data = request.get_json()
+            print("Received data:", data)  # Log the received data
             segments = data.get('segments', [])
             file_format = data.get('format', '')
+            download_type = data.get('type', 'transcription')
 
             if not segments or not file_format:
-                raise ValueError("Segments or format missing from request")
+                print("Missing segments or format")  # Log if segments or format is missing
+                return jsonify({"error": "Segments or format missing from request"}), 400
+
+            is_translation = download_type == 'translation'
 
             if file_format == 'docx':
                 try:
-                    # Generate DOCX
                     doc = Document()
                     for segment in segments:
-                        # Check if the segment is a string or a dictionary
-                        if isinstance(segment, dict):
-                            text = segment.get('text', '')
+                        if 'start' in segment and 'end' in segment:
+                            timestamp = f"[{format_time(segment['start'])} --> {format_time(segment['end'])}] "
                         else:
-                            text = segment  # Assume it's already a string
-
-                        add_paragraph_with_direction(doc, text)
+                            timestamp = ""
+                        text = segment.get('text', '') if isinstance(segment, dict) else segment
+                        add_paragraph_with_direction(doc, timestamp + text)
                     
                     buffer = io.BytesIO()
                     doc.save(buffer)
                     buffer.seek(0)
-                    return send_file(buffer, as_attachment=True, download_name="transcription.docx", mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                    return send_file(
+                        buffer, 
+                        as_attachment=True, 
+                        download_name=f"{download_type}.docx", 
+                        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
                 except Exception as e:
-                    print(f"Error generating DOCX: {e}")
+                    app.logger.error(f"Error generating DOCX: {e}")
                     return jsonify({"error": "Error generating DOCX"}), 500
 
             elif file_format == 'srt':
                 try:
-                    # Generate SRT
-                    srt_content = generate_srt(segments)
-                    buffer = io.BytesIO(srt_content.encode('utf-8'))
-                    buffer.seek(0)
-                    return send_file(buffer, as_attachment=True, download_name="transcription.srt", mimetype="text/plain")
+                    srt_content = generate_srt(segments, is_translation)
+                    return send_file(
+                        io.BytesIO(srt_content.encode('utf-8')),
+                        as_attachment=True,
+                        download_name=f"{download_type}.srt",
+                        mimetype="text/plain"
+                    )
                 except Exception as e:
-                    print(f"Error generating SRT: {e}")
-                    return jsonify({"error": "Error generating SRT"}), 500
+                    app.logger.error(f"Error generating SRT: {e}")
+                    return jsonify({"error": f"Error generating SRT: {str(e)}"}), 500
 
             elif file_format == 'vtt':
                 try:
-                    # Generate WebVTT
-                    vtt_content = generate_vtt(segments)
-                    buffer = io.BytesIO(vtt_content.encode('utf-8'))
-                    buffer.seek(0)
-                    return send_file(buffer, as_attachment=True, download_name="transcription.vtt", mimetype="text/vtt")
+                    vtt_content = generate_vtt(segments, is_translation)
+                    return send_file(
+                        io.BytesIO(vtt_content.encode('utf-8')),
+                        as_attachment=True,
+                        download_name=f"{download_type}.vtt",
+                        mimetype="text/vtt"
+                    )
                 except Exception as e:
-                    print(f"Error generating VTT: {e}")
-                    return jsonify({"error": "Error generating VTT"}), 500
+                    app.logger.error(f"Error generating VTT: {e}")
+                    return jsonify({"error": f"Error generating VTT: {str(e)}"}), 500
 
             else:
                 return jsonify({"error": "Unsupported format"}), 400
 
         except Exception as e:
-            print(f"Error in download endpoint: {e}")
-            return jsonify({"error": "Internal Server Error"}), 500
+            app.logger.error(f"Error in download endpoint: {e}")
+            return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
     return app
 
