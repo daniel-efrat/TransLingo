@@ -46,7 +46,7 @@ function getTranslationText() {
     const translationOutput = document.getElementById('translation-output');
     if (!translationOutput) {
         console.error('Translation output element not found');
-        showNotification('Error: Translation output not found', 'error');
+        showNotification('Error: Translation output not found', 'error', 'translation');
         return null;
     }
     // Join all paragraph texts with newlines
@@ -61,7 +61,7 @@ function downloadTranslation(format) {
     const translationOutput = document.getElementById('translation-output');
     if (!translationOutput) {
         console.error('Translation output element not found');
-        showNotification('Error: Translation output not found', 'error');
+        showNotification('Error: Translation output not found', 'error', 'translation');
         return;
     }
 
@@ -97,11 +97,13 @@ function downloadTranslation(format) {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
-        showNotification(`Translation downloaded successfully as ${format}`, 'success');
+        showNotification(`Translation downloaded successfully as ${format}`, 'success', 'translation');
+        console.log('Notification should be shown:', `Translation downloaded successfully as ${format}`);
     })
     .catch(error => {
         console.error('Download error:', error);
-        showNotification(error.message || 'An error occurred during download.', 'error');
+        showNotification(error.message || 'An error occurred during download.', 'error', 'translation');
+        console.log('Error notification should be shown:', error.message || 'An error occurred during download.');
     });
 }
 
@@ -110,10 +112,12 @@ function copyTranslationToClipboard() {
     if (!text) return;
 
     navigator.clipboard.writeText(text).then(function() {
-        showNotification('Translation copied to clipboard', 'success');
+        showNotification('Translation copied to clipboard', 'success', 'translation');
+        console.log('Notification should be shown: Translation copied to clipboard');
     }, function(err) {
         console.error('Could not copy text: ', err);
-        showNotification('Failed to copy translation', 'error');
+        showNotification('Failed to copy translation', 'error', 'translation');
+        console.log('Error notification should be shown: Failed to copy translation');
     });
 }
 

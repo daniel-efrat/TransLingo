@@ -19,25 +19,25 @@
     />
   </head>
   <body>
-    <header class="app-header">
-      <img
-        src="{{ url_for('static', filename='assets/logo.png') }}"
-        alt="TransLingo Logo"
-        class="app-logo"
-      />
-      <div class="app-title">
-        <h1>TransLingo Pro</h1>
-        <p class="subtitle">Transcription | Translation | Subtitles</p>
-      </div>
-    </header>
+    <div class="content-wrapper d-flex flex-column min-vh-100">
+      <header class="app-header">
+        <img
+          src="{{ url_for('static', filename='assets/logo.png') }}"
+          alt="TransLingo Logo"
+          class="app-logo"
+        />
+        <div class="app-title">
+          <h1>TransLingo Pro</h1>
+          <p class="subtitle">Transcription | Translation | Subtitles</p>
+        </div>
+      </header>
 
-    <div class="container mt-5">{% block content %}{% endblock %}</div>
+      <div class="container mt-5 flex-grow-1">{% block content %}{% endblock %}</div>
+    </div>
 
     <footer>
-      <p>© 2024 TransLingo Pro</p>
-      <div class="attribute">
-        <span>Powered by</span>
-        <img src="{{ url_for('static', filename='assets/openai.svg') }}" width="80px" alt="OpenAI Logo" />
+      <div class="">
+        <p>© <span id="currentYear"></span> TransLingo Pro | Powered by <span><img src="{{ url_for('static', filename='assets/openai.svg') }}" width="80px" alt="OpenAI Logo" style="margin-top: -2px;" /></span></p>
       </div>
     </footer>
 
@@ -49,5 +49,8 @@
     <script src="{{ url_for('static', filename='js/translation.js') }}"></script>
     <script src="{{ url_for('static', filename='js/languageFilter.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>

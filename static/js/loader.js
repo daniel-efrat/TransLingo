@@ -3,9 +3,9 @@
 // Messages to show during the loading process
 const loaderMessage = document.querySelector("#loader-message")
 const transcribingMessages = [
-  "Just a moment... Our AI is transcribing everything you said!",
-  "The AI is already transcribing all the words!",
+  "Just a moment... Our AI is transcribing!",
   "This may take a while, depending on your file size...",
+  "The AI is already transcribing all the words!",
   "Polishing and refining your transcription!",
   "Almost there - the transcription is nearly ready!",
 ]

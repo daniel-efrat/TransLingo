@@ -1,28 +1,45 @@
-let notificationTimeout;
+let notificationTimeouts = {};
 
-function showNotification(message, type = 'success') {
-    console.log('Showing notification:', message, type);
-    const notifications = document.getElementsByClassName('global-notification');
-    if (notifications.length === 0) {
-        console.error('Notification elements not found');
-        return;
-    }
-    
-    // Update all notification elements
-    Array.from(notifications).forEach(notification => {
-        notification.textContent = message;
-        notification.className = `global-notification notification ${type}`;
-        notification.style.display = 'block';
-    });
+function showNotification(message, type = 'success', context = 'global') {
+    console.log('Showing notification:', message, type, context);
+    const notificationId = `notification-${context}`;
+    let notification = document.getElementById(notificationId);
 
-    // Clear any existing timeout before setting a new one
-    if (notificationTimeout) {
-        clearTimeout(notificationTimeout);
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = notificationId;
+        notification.className = `notification ${type}`;
+        notification.style.position = 'fixed';
+        notification.style.top = '20px';
+        notification.style.right = '20px';
+        notification.style.padding = '10px';
+        notification.style.borderRadius = '5px';
+        notification.style.zIndex = '1000';
+        document.body.appendChild(notification);
     }
 
-    notificationTimeout = setTimeout(() => {
-        Array.from(notifications).forEach(notification => {
-            notification.style.display = 'none';
-        });
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+
+    if (type === 'success') {
+        notification.style.backgroundColor = '#4CAF50';
+        notification.style.color = 'white';
+    } else if (type === 'error') {
+        notification.style.backgroundColor = '#f44336';
+        notification.style.color = 'white';
+    } else {
+        notification.style.backgroundColor = '#2196F3';
+        notification.style.color = 'white';
+    }
+
+    notification.style.display = 'block';
+
+    // Clear any existing timeout for this context
+    if (notificationTimeouts[context]) {
+        clearTimeout(notificationTimeouts[context]);
+    }
+
+    notificationTimeouts[context] = setTimeout(() => {
+        notification.style.display = 'none';
     }, 5000);
 }

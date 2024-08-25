@@ -45,11 +45,12 @@ function copyToClipboard(type = "transcription") {
     .then(() => {
       showNotification(
         `${type.charAt(0).toUpperCase() + type.slice(1)} copied to clipboard!`,
-        'success'
+        'success',
+        type
       );
     })
     .catch((err) => {
       console.error("Could not copy text: ", err);
-      showNotification('Failed to copy to clipboard', 'error');
+      showNotification('Failed to copy to clipboard', 'error', type);
     });
 }

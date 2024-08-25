@@ -3,6 +3,10 @@ html {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
   background-color: #1c1c1c;
   color: #e0e0e0;
   font-family: "Arial", sans-serif;
@@ -150,7 +154,10 @@ box-shadow: inset 5px 5px 10px #181818,
 }
 
 footer {
-  margin-top: 2rem;
+  flex-shrink: 0;
+  background-color: #2690b2;
+  padding: 20px 0;
+  margin-top: auto;
   text-align: center;
   color:#e0e0e0;
   display: flex;
@@ -211,9 +218,10 @@ form {
 
 .notification {
   position: fixed;
+  height: max-content;
   bottom: 20px;
   right: 20px;
-  background-color: #4caf50;
+  background-color: #4BBD00;
   color: white;
   padding: 10px;
   border-radius: 5px;
@@ -280,10 +288,20 @@ color: #e0e0e0
     padding: 20px;
     border-radius: 10px;
     color: #e0e0e0;
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .splash-content img {
-    width: 200px;
+    width: 300px;
     height: auto;
 }
 
@@ -293,18 +311,18 @@ color: #e0e0e0
 
 @media (max-width: 768px) {
     .splash-content img {
-        width: 150px;
+        width: 250px;
     }
 }
 
 @media (max-width: 480px) {
     .splash-content img {
-        width: 100px;
+        width: 200px;
     }
 }
 
 @media (max-width: 320px) {
     .splash-content img {
-        width: 80px;
+        width: 150px;
     }
 }

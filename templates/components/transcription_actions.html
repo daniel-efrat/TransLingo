@@ -57,7 +57,7 @@ function getTranscriptionText() {
     const transcriptionOutput = document.getElementById('output');
     if (!transcriptionOutput) {
         console.error('Transcription output element not found');
-        showNotification('Error: Transcription output not found', 'error');
+        showNotification('Error: Transcription output not found', 'error', 'transcription');
         return null;
     }
     return transcriptionOutput.textContent.trim();
@@ -69,7 +69,7 @@ function downloadTranscription(format) {
     const transcriptionOutput = document.getElementById('output');
     if (!transcriptionOutput) {
         console.error('Transcription output element not found');
-        showNotification('Error: Transcription output not found', 'error');
+        showNotification('Error: Transcription output not found', 'error', 'transcription');
         return;
     }
 
@@ -106,11 +106,11 @@ function downloadTranscription(format) {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
-        showNotification(`Transcription downloaded successfully as ${format}`, 'success');
+        showNotification(`Transcription downloaded successfully as ${format}`, 'success', 'transcription');
     })
     .catch(error => {
         console.error('Download error:', error);
-        showNotification(error.message || 'An error occurred during download.', 'error');
+        showNotification(error.message || 'An error occurred during download.', 'error', 'transcription');
     });
 }
 
@@ -119,10 +119,10 @@ function copyTranscriptionToClipboard() {
     if (!text) return;
 
     navigator.clipboard.writeText(text).then(function() {
-        showNotification('Transcription copied to clipboard', 'success');
+        showNotification('Transcription copied to clipboard', 'success', 'transcription');
     }, function(err) {
         console.error('Could not copy text: ', err);
-        showNotification('Failed to copy transcription', 'error');
+        showNotification('Failed to copy transcription', 'error', 'transcription');
     });
 }
 
